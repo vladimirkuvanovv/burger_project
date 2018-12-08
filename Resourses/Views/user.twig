@@ -1,0 +1,61 @@
+{% extends 'template.twig' %}
+
+{% block body %}
+    <a href="/user/authout" class="btn btn-success pull-right">Выход</a>
+    <div class="row">
+        <div class="col-sm-6">
+            <form class="form" method="get" action="/user/index/">
+                <label>Сортировка по </label>
+                <select class="form-control" name="sort_name">
+                    <option></option>
+                    <option value="id">ID</option>
+                    <option value="username">Имя</option>
+                    <option value="age">Возраст</option>
+                </select>
+                <label>Направление сортировки</label>
+                <select class="form-control" name="sort_by">
+                    <option></option>
+                    <option value="asc">По возрастанию</option>
+                    <option value="desc">По убыванию</option>
+                </select>
+                <br/>
+                <button class="btn btn-info">Сортировать</button>
+            </form>
+        </div>
+    </div>
+    <div style="border:1px solid #c1c1c1">
+        <table class="table table-striped">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Details</th>
+                <th>Photo</th>
+            </tr>
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>
+                        {{ user.age }}
+                        <br/>
+                        <br/>
+                        {% if  user.age >= 18 %}
+                            <div class="label label-success">Совершеннолетний</div>
+                        {% else %}
+                            <div class="label label-warning">Несовершеннолетний</div>
+                        {% endif %}
+                        <br/>
+                        <br/>
+                    </td>
+                    <td>{{ user.details }}</td>
+                    <td>
+                        {% if user.avatar.url %}
+                            <img src="/Uploads/{{ user.avatar.url }}" width="150">
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

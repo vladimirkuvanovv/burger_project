@@ -1,7 +1,16 @@
 {
   "autoload": {
     "psr-4": {
-      "App\\": "app/"
+      "App\\": "App/"
     }
+  },
+  "require": {
+    "symfony/var-dumper": "^4.1",
+    "vlucas/phpdotenv": "^2.5",
+    "illuminate/database": "^5.7",
+    "twig/twig": "^2.0",
+    "intervention/image": "^2.4",
+    "ext-http": "*",
+    "ext-pdo": "*"
   }
 }
