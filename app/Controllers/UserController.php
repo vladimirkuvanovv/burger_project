@@ -14,11 +14,8 @@ class UserController extends BaseController
 
     public function getIndex() //render всех пользователей
     {
-//        $users = User::with('avatar')->orderBy('age');
         if (!empty($this->request['sort_name']) && !empty($this->request['sort_by'])) {
-//            dd($this->request);
             $user = User::with('avatar')->orderBy($this->request['sort_name'], $this->request['sort_by']);
-//                $users->orderBy($this->request['sort_name'], $this->request['sort_by']);
             $list = $user->get();
         } else {
             $list = User::all();
@@ -42,14 +39,6 @@ class UserController extends BaseController
         if (empty($this->request['age'])) {
             $errors[] = "User age not filled";
         }
-//        if (empty($this->request['details'])) {
-//            $errors[] = "User details not filled";
-//        }
-//        if (empty($this->request['password'])) {
-//            $errors[] = "User password not filled";
-//        } else {
-//
-//        }
 
         $this->request['password'] = md5($this->request['password']);
 
@@ -63,47 +52,19 @@ class UserController extends BaseController
         }
 
         //добавление пользователя из формы в фс
-
         $user = new User();
         $user->fill($this->request);
         if (!$user->save()) {
-//            return Helpers::redirect(
-//                $this->request['route'],
-//                [
-//                    'error_message' => 'Не удалось сохранить в БД',
-//                ]
-//            );
-            header('Location: http//' . $_SERVER['SERVER_NAME'] . '/base/404', false, 302);
+            header('Location: http//' . $_SERVER['SERVER_NAME'] . '/base/404', true, 302);
             exit();
-
         }
         $this->addFile($user);
-//        return Helpers::redirect('user/index');
+        return header('Location: http://' . $_SERVER['SERVER_NAME'] . '/user/index', true, 302);
     }
 
     public function addFile(User $user)
     {
-//        if (!empty($this->request['files']['user_photo']['tmp_name'])) {
-//            $fileName = $this->request['files']['user_photo']['name'];
-//
-//            if ($this->fileManager->make($this->request['files']['user_photo']['tmp_name'])->save(
-//                $this->dirUpload . '/' . $fileName
-//            )) {
-//                (new File())->fill(
-//                    [
-//                        'user_id' => $user->id,
-//                        'url' => $fileName,
-//                    ]
-//                )->save();
-//            }
-//        } else {
-//            return Helpers::redirect(
-//                $this->request['route'],
-//                [
-//                    'error_message' => 'Неизвестная ошибка',
-//                ]
-//            );
-//        }
+
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($_FILES['user_photo']['error'] == UPLOAD_ERR_OK && $_FILES['user_photo']['type'] == 'image/jpeg') {
                 $uploaddir = __DIR__ . '/../../Uploads/';
@@ -144,7 +105,7 @@ class UserController extends BaseController
                     $font->align('center');
                     $font->valign('center');
                 })
-            ->resize(500, null, function ($image) {
+            ->resize(200, null, function ($image) {
                 $image->aspectRatio();
             });
         $image->save(__DIR__ . '/../../Uploads/' . $filename);
@@ -155,13 +116,41 @@ class UserController extends BaseController
         $user = User::where('email', $this->request['email'])->where('password', md5($this->request['password']))->first();
         if ($user->exists) {
             $_SESSION['user'] = $user->toArray();
-            Helpers::redirect('user/index');
+            header('Location: http://' . $_SERVER['SERVER_NAME'] . '/user/index', true, 302);
+            exit();
         } else {
-            header('Location:' . $_SERVER['SERVER_NAME'] . '/register/index', false, 302);
+            header('Location: http://' . $_SERVER['SERVER_NAME'] . '/register/index', true, 302);
+            exit();
         }
     }
 
-    public function getAuthOut()
+    public function getEdit()
+    {
+        $id = $_GET['id'];
+        $user = User::find($id);
+        return $this->view->render('edit', ['user' => $user]);
+    }
+
+    public function postUpdate()
+    {
+        $id = $_POST['id'];
+        $user = User::find($id);
+        $username = $this->request['username'];
+        $age = $this->request['age'];
+        $user->update(['username' => $username, 'age' => $age]);
+        header('Location: http://' . $_SERVER['SERVER_NAME'] . '/user/index', true, 302);
+        exit();
+    }
+
+    public function postDelete()
+    {
+        $id = $this->request['id'];
+        $user = User::find($id);
+        $user->delete($id);
+        return header('Location: http://' . $_SERVER['SERVER_NAME'] . '/user/index');
+    }
+
+    public function getLogOut()
     {
         $_SESSION['user'] = null;
         return header('Location: http://' . $_SERVER['SERVER_NAME'] . '/auth/index', false, 302);

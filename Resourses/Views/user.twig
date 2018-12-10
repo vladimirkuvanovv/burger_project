@@ -1,7 +1,7 @@
 {% extends 'template.twig' %}
 
 {% block body %}
-    <a href="/user/authout" class="btn btn-success pull-right">Выход</a>
+    <a href="/user/logout" class="btn btn-success pull-right">Выход</a>
     <div class="row">
         <div class="col-sm-6">
             <form class="form" method="get" action="/user/index/">
@@ -31,6 +31,7 @@
                 <th>Age</th>
                 <th>Details</th>
                 <th>Photo</th>
+                <th>Actions</th>
             </tr>
             {% for user in users %}
                 <tr>
@@ -53,6 +54,19 @@
                         {% if user.avatar.url %}
                             <img src="/Uploads/{{ user.avatar.url }}" width="150">
                         {% endif %}
+                    </td>
+                    <td style="padding-left: 0">
+                        <div class="edit"><a href="/user/edit?id={{ user.id }}" class="btn btn-success pull-right"
+                                             style="margin-right: 10px">Edit</a>
+                        </div>
+                        <form action="/user/delete" method="post">
+                            <input type="hidden" value="{{ user.id }}" name="id">
+                            {#{{ csrf }}#}
+                            {#{{ method = 'delete' }}#}
+                            <div class="delete">
+                                <button class="btn btn-info">Delete</button>
+                            </div>
+                        </form>
                     </td>
                 </tr>
             {% endfor %}

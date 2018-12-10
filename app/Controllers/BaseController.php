@@ -26,7 +26,6 @@ class BaseController
         $this->view = new View();
         $this->request = array_merge($_REQUEST, ['files' => $_FILES]);
         $this->errors = $this->scanErrors();
-        $this->dirUpload = __DIR__ . '/../../Uploads';
 
         $this->checkAuth();
 
@@ -42,7 +41,7 @@ class BaseController
 
     private function scanErrors()
     {
-//        $getErrors = htmlspecialchars_decode($_REQUEST['error_message']);
+        $getErrors = htmlspecialchars_decode($_REQUEST['error_message']);
         if (!empty($getErrors)) {
             return explode('::', $getErrors);
         }

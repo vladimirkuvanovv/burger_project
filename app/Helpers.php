@@ -23,6 +23,6 @@ class Helpers
 
     public static function userIsAuth()
     {
-       return !empty($_SESSION['user']) && isset($_SESSION['user']) && isset($_SESSION['user']['id']);
+        return !empty($_SESSION['user']) && isset($_SESSION['user']) && isset($_SESSION['user']['id']);
     }
 }
